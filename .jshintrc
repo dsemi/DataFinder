@@ -1,0 +1,8 @@
+{
+  "globals": {
+    "window": false,
+    "document": false,
+    "chrome": false,
+    "require": false
+  }
+}

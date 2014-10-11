@@ -1,0 +1,21 @@
+{
+  "manifest_version": 2,
+
+  "name" : "ARF",
+  "version" : "0.1",
+  "description" : "Asynchronous Result Finder",
+
+  "permissions" : [],
+
+  "background" : {
+    "persistent" : true,
+    "page" : "background.html"
+  },
+
+  "content_scripts": [
+    {
+      "matches": [ "https://www.google.com/*" ],
+      "js": [ "scripts/search-scraper.js" ]
+    }
+  ]
+}
