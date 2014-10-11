@@ -9,7 +9,13 @@ if (hostname === 'www.google.com') {
   };
 
   // There is already a search when Google loads.
-  var phrase = window.location.search.match(/q=(.*?)&/)[1].replace(/\+/g, ' ');
+  var phrase = window.location.search.match(/q=([^&]*)/)[1].replace(/\+/g, ' ');;
+  sendSearchMessage(phrase);
+}
+
+if (hostname === 'www.reddit.com') {
+  // There is already a search when Google loads.
+  var phrase = window.location.search.match(/q=([^&]*)/)[1].replace(/\+/g, ' ');
   sendSearchMessage(phrase);
 }
 

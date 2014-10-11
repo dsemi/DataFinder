@@ -17,7 +17,10 @@
 
   "content_scripts": [
     {
-      "matches": [ "https://www.google.com/*" ],
+      "matches": [
+        "https://www.google.com/*",
+        "http://www.reddit.com/*", "https://www.reddit.com/*"
+      ],
       "js": [ "scripts/require.js", "scripts/search-scraper.js" ]
     }
   ]
