@@ -11,7 +11,7 @@ def root():
 
 @app.route('/getid', methods=['POST'])
 def get_uuid():
-    return uuid4()
+    return str(uuid4())
     
 @app.route('/<uid>')
 def get_phrase(uid):
