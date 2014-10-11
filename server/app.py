@@ -7,16 +7,18 @@ from uuid import uuid4
 
 app = Flask(__name__)
 
-@app.route('/getid') # change to post only after testing
+@app.route('/getid', methods=['POST', 'GET']) # change to post only after testing
 def get_uuid():
     return str(uuid4())
     
-@app.route('/search/<uid>')
-def get_phrase(uid): # Change to post only after testing
+@app.route('/search/<uid>', methods=['POST', 'GET'])
+def get_phrase(uid):
     # Get the phrase from document
-    # phrase
-    db.data.update({'uuid': uid}, {'$push': {'searches': phrase}}, upsert = True)
-    return
+    print(request.args)
+    print(request.data)
+    print(request.form)
+    # db.data.update({'uuid': uid}, {'$push': {'searches': phrase}}, upsert = True)
+    return ""
 
 if __name__ == '__main__':
     client = MongoClient()
