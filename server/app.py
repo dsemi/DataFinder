@@ -1,21 +1,25 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 
-from flask import Flask
+import os
+from pymongo import MongoClient
+from flask import Flask, request
 from uuid import uuid4
 
 app = Flask(__name__)
 
-@app.route('/')
-def root():
-    return 'Hello worlds'
-
-@app.route('/getid', methods=['POST'])
+@app.route('/getid') # change to post only after testing
 def get_uuid():
     return str(uuid4())
     
-@app.route('/<uid>')
-def get_phrase(uid):
-    pass
+@app.route('/search/<uid>')
+def get_phrase(uid): # Change to post only after testing
+    # Get the phrase from document
+    # phrase
+    db.data.update({'uuid': uid}, {'$push': {'searches': phrase}}, upsert = True)
+    return
 
 if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=80, debug=True)
+    client = MongoClient()
+    db = client.data_finder
+    
+    app.run(host='0.0.0.0', port=os.environ.get('PORT', 5000), debug=True)
