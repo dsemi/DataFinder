@@ -5,7 +5,10 @@
   "version" : "0.1",
   "description" : "Asynchronous Result Finder",
 
-  "permissions" : [],
+  "permissions" : [
+    "http://104.131.82.233/*",
+    "storage"
+  ],
 
   "background" : {
     "persistent" : true,
@@ -15,7 +18,7 @@
   "content_scripts": [
     {
       "matches": [ "https://www.google.com/*" ],
-      "js": [ "scripts/search-scraper.js" ]
+      "js": [ "scripts/require.js", "scripts/search-scraper.js" ]
     }
   ]
 }
