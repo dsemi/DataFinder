@@ -18,7 +18,23 @@ require(['utils/Ajax'], function(Ajax) {
     }
   });
 
+  // A set of actions to be taken when a message is received from one
+  // of the content scripts.
+  var actions = {
+    'search' : function(id, req) {
+      Ajax.post(HOST + '/search/' + id).send(req.phrase);
+    }
+  };
+
+  /**
+   * Callback for when the id has been successfully loaded or retrieved from the server.
+   * @param {number} id
+   */
   function idReady(id) {
     console.log(id);
+
+    chrome.runtime.onMessage.addListener(function(req) {
+      actions[req.action](id, req);
+    });
   }
 });
