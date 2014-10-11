@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 
 from flask import Flask
-from uuid import uuid4 as uuid
+from uuid import uuid4
 
 app = Flask(__name__)
 
@@ -11,7 +11,7 @@ def root():
 
 @app.route('/getid', methods=['POST'])
 def get_uuid():
-    return uuid()
+    return uuid4()
     
 @app.route('/<uid>')
 def get_phrase(uid):
