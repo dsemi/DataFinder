@@ -9,14 +9,24 @@ if (hostname === 'www.google.com') {
   };
 
   // There is already a search when Google loads.
-  var phrase = window.location.search.match(/q=([^&]*)/)[1].replace(/\+/g, ' ');;
+  var phrase = window.location.search.match(/q=([^&]*)/)[1].replace(/\+/g, ' ');
   sendSearchMessage(phrase);
 }
 
-if (hostname === 'www.reddit.com') {
-  // There is already a search when Google loads.
-  var phrase = window.location.search.match(/q=([^&]*)/)[1].replace(/\+/g, ' ');
-  sendSearchMessage(phrase);
+else if (hostname === 'www.amazon.com') {
+  var match = window.location.search.match(/field-keywords=([^&]*)/);
+  if (match && match.length >= 2) {
+    var phrase = decodeURIComponent(match[1]);
+    sendSearchMessage(phrase);
+  }
+}
+
+else {  // All other websites that might have a search
+  var match = window.location.search.match(/[qp]=([^&]*)/);
+  if (match && match.length >= 2) {
+    var phrase = decodeURIComponent(match[1]).replace(/\+/g, ' ');
+    sendSearchMessage(phrase);
+  }
 }
 
 function sendSearchMessage(phrase) {
