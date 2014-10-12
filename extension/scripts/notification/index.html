@@ -12,14 +12,23 @@
     </div>
 
     <div class="notification">
-      <div class="left-arrow"><img src="left-arrow.png"></div>
-      <div class="content">
-        <span>New result found!</span>
-<!--        <iframe id="frame"></iframe>-->
-        <span><a id="update_url" target="_blank"></a></span>
-        <span>For search: </span><span id="phrase"></span>
+      <div class="left-arrow">
+        <img id="left-arrow" src="left-arrow.png">
+        <img id="left-arrow-double" src="left-arrow-double.png">
       </div>
-      <div class="right-arrow"><img src="right-arrow.png"></div>
+
+      <div class="content">
+        <div>New result found!</div>
+        <br>
+        <div><a id="update_url" target="_blank"></a></div>
+        <br>
+        <div>For search: <em><span id="phrase"></span></em></div>
+      </div>
+
+      <div class="right-arrow">
+        <img id="right-arrow" src="right-arrow.png">
+        <img id="right-arrow-double" src="right-arrow-double.png">
+      </div>
     </div>
 
     <script data-main="main.js" src="/scripts/require.js"></script>

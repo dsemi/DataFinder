@@ -110,10 +110,16 @@ require(['utils/Ajax', 'widget/BgWidget'], function(Ajax, BgWidget) {
     Ajax.post(HOST + '/updates/' + id).success(function(res) {
       chrome.tabs.query({currentWindow: true, active : true}, function(tabs) {
         chrome.tabs.insertCSS(tabs[0].id, {file : 'styles.css'});
-        notification.inject(tabs[0].id, function() {
-            addUpdates(JSON.parse(res), function(storedUpdates) {
-              notification.sendMessage(tabs[0].id, storedUpdates);
+        addUpdates(JSON.parse(res), function(storedUpdates) {
+          if (Object.keys(storedUpdates).length < 1) {
+            return;
+          }
+          notification.inject(tabs[0].id, function() {
+             notification.onMessage(function(message) {
+              removeUpdate(message, console.log.bind(console));
             });
+            notification.sendMessage(tabs[0].id, storedUpdates);
+          });
         });
       });
     }).send();
@@ -129,6 +135,30 @@ function addUpdates(updates, callback) {
        storedUpdates[phrase] = [];
      }
       storedUpdates[phrase] = storedUpdates[phrase].concat(updates[phrase]);
+    }
+
+    chrome.storage.sync.set({'updates': JSON.stringify(storedUpdates)}, callback.bind(this, storedUpdates));
+  });
+}
+
+function removeUpdate(update, callback) {
+  chrome.storage.sync.get('updates', function(res) {
+    var storedUpdates = res.updates ? JSON.parse(res.updates) : {},
+        phrase = update.phrase,
+        url = update.url;
+
+   if (!storedUpdates[phrase]) {
+     delete storedUpdates[phrase];
+     callback();
+     return;
+   }
+
+   storedUpdates[phrase] = storedUpdates[phrase].filter(function(storedUrl) {
+      return storedUrl !== url;
+    });
+
+    if (storedUpdates[phrase].length === 0) {
+      delete storedUpdates[phrase];
     }
 
     chrome.storage.sync.set({'updates': JSON.stringify(storedUpdates)}, callback.bind(this, storedUpdates));
