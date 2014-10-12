@@ -21,10 +21,11 @@ require(['utils/Ajax'], function(Ajax) {
   // A set of actions to be taken when a message is received from one
   // of the content scripts.
   var actions = {
-    'search' : function(id, req) {
+    'search' : function(id, req, sender) {
+      chrome.pageAction.show(sender.tab.id);
       Ajax.post(HOST + '/search/' + id)
-      .setHeader('Content-Type', 'application/json')
-      .send(JSON.stringify(req));
+        .setHeader('Content-Type', 'application/json')
+        .send(JSON.stringify(req));
     }
   };
 
@@ -35,8 +36,8 @@ require(['utils/Ajax'], function(Ajax) {
   function idReady(id) {
     console.log(id);
 
-    chrome.runtime.onMessage.addListener(function(req) {
-      actions[req.action](id, req);
+    chrome.runtime.onMessage.addListener(function(req, sender) {
+      actions[req.action](id, req, sender);
     });
   }
 });
