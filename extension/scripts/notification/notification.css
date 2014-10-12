@@ -78,8 +78,10 @@ body {
 }
 .content {
   float: left;
-  width: 244px;
+  width: 234px;
   height: 100%;
+  padding-left: 5px;
+  padding-right: 5px;
 }
 .content iframe {
   height: 100px;
