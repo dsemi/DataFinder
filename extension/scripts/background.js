@@ -22,7 +22,9 @@ require(['utils/Ajax'], function(Ajax) {
   // of the content scripts.
   var actions = {
     'search' : function(id, req) {
-      Ajax.post(HOST + '/search/' + id).send(req.phrase);
+      Ajax.post(HOST + '/search/' + id)
+      .setHeader('Content-Type', 'application/json')
+      .send(JSON.stringify(req));
     }
   };
 
