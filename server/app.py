@@ -50,20 +50,26 @@ def get_info(uid):
     data = db.data.find_one({'uuid': uid})
     queries = {}
     for query,v in data['pages'].items():
-        links = v['new'].copy()
-        v['old'].extend(v['new'])
-        v['new'] = []
-        queries[query] = links
+        if v['new']:
+            links = v['new'].copy()
+            v['old'].extend(v['new'])
+            v['new'] = []
+            queries[query] = links
     db.data.update({'uuid': uid}, data)
     return jsonify(**queries)
 
 def search(query):
-    # Leave disabled until Google query limit is fixed
-    # r = requests.get(search_url.format(quote(query), cx, key))
-    # print(r)
-    # return [x['link'] for x in r.json()['items']]
-    return ["ahah"]
+    r = requests.get(search_url.format(quote(query), cx, key))
+    print(r)
+    return [x['link'] for x in r.json()['items']]
 
+@app.route('/force_update', methods=['POST', 'GET'])
+def force_update_test():
+    obj = db.data.find_one()
+    obj['pages'][obj['searches'][0]]['new'].extend(['http://relevantdata.com'])
+    db.data.update({'uuid': obj['uuid']}, obj)
+    return ''
+    
 if __name__ == '__main__':
     client = MongoClient()
     db = client.test_db
