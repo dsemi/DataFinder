@@ -23,7 +23,7 @@ def get_phrase(uid):
     phrase = data['phrase']
     db.data.update({'uuid': uid}, {'$push': {'searches': phrase}}, upsert = True)
     obj = db.data.find_one({'uuid': uid})
-    obj['last update'] = datetime.now()`
+    obj['last update'] = datetime.now()
     pages = obj.setdefault('pages', {})
     pages[phrase] = search(phrase)
     db.data.update({'uuid': uid}, obj)
