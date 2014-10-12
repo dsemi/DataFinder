@@ -7,4 +7,11 @@
   top: 10px;
   right: 10px;
   z-index: 99999999;
+  -webkit-animation: ARF-FADE-IN 1s 1;
+  -animation-timing-function: ease-in-out;
+}
+
+@-webkit-keyframes ARF-FADE-IN {
+  0%   { opacity: 0; margin-top: -100px; }
+  100% { opacity: 1; margin-top: 0; }
 }
