@@ -18,6 +18,17 @@ require(['utils/Ajax'], function(Ajax) {
     }
   });
 
+  /**
+   * Callback for when the id has been successfully loaded or retrieved from the server.
+   * @param {number} id
+   */
+  function idReady(id) {
+    chrome.runtime.onMessage.addListener(function(req, sender) {
+      actions[req.action](id, req, sender);
+    });
+    setReminderSchedule();
+  }
+
   // A set of actions to be taken when a message is received from one
   // of the content scripts.
   var actions = {
@@ -26,18 +37,48 @@ require(['utils/Ajax'], function(Ajax) {
       Ajax.post(HOST + '/search/' + id)
         .setHeader('Content-Type', 'application/json')
         .send(JSON.stringify(req));
+    },
+
+    'alarm' : function(id, req, sender) {
+      var date = req.date;
+      if (date) {
+        setAlarm(date, req.phrase, function(){});
+      }
     }
   };
 
-  /**
-   * Callback for when the id has been successfully loaded or retrieved from the server.
-   * @param {number} id
-   */
-  function idReady(id) {
-    console.log(id);
+  function setAlarm(date, phrase, callback) {
+    chrome.storage.sync.get('reminders', function(res) {
+      var reminders = res.reminders ? JSON.parse(res.reminders) : {};
 
-    chrome.runtime.onMessage.addListener(function(req, sender) {
-      actions[req.action](id, req, sender);
+      if (!reminders[date]) {
+        reminders[date] = [];
+      }
+
+      reminders[date].push(phrase);
+
+      chrome.storage.sync.set({'reminders': JSON.stringify(reminders)}, callback);
     });
   }
+
+  function setReminderSchedule() {
+    sendTodaysReminders();
+    setInterval(function() {
+      sendTodaysReminders();
+    }, 864000);
+  }
+
+  function sendTodaysReminders() {
+    getTodaysReminders(function(reminders) {
+      console.log(reminders);
+    });
+  }
+
+  function getTodaysReminders(callback) {
+    chrome.storage.sync.get('reminders', function(res) {
+      var reminders = res.reminders ? JSON.parse(res.reminders) : {};
+      callback(reminders[new Date().toDateString()]);
+    });
+  }
+
 });

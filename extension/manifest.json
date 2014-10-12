@@ -29,7 +29,7 @@
       "matches": [
         "<all_urls>"
       ],
-      "js": [ "scripts/require.js", "scripts/search-scraper.js" ]
+      "js": [ "scripts/search-scraper.js" ]
     }
   ]
 }
