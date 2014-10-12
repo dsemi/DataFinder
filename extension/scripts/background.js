@@ -1,10 +1,13 @@
-var HOST = 'http://104.131.82.233';
+var HOST = 'http://104.131.82.233',
+    NOTIFICATION_ID = 'arf_notification',
+    NOTIFICATION_SRC = chrome.extension.getURL('scripts/notification'),
+    STYLES_URL = chrome.extension.getURL('styles.css');
+
 
 require.config({
-
 });
 
-require(['utils/Ajax'], function(Ajax) {
+require(['utils/Ajax', 'widget/BgWidget'], function(Ajax, BgWidget) {
   // Retrieve this user's UUID
   chrome.storage.sync.get('id', function(data) {
     var id = data.id;
@@ -24,8 +27,12 @@ require(['utils/Ajax'], function(Ajax) {
    */
   function idReady(id) {
     chrome.runtime.onMessage.addListener(function(req, sender) {
-      actions[req.action](id, req, sender);
+      var action = actions[req.action];
+      if (action) {
+        action(id, req, sender);
+      }
     });
+    setUpdateSchedule(id);
     setReminderSchedule();
   }
 
@@ -81,4 +88,21 @@ require(['utils/Ajax'], function(Ajax) {
     });
   }
 
+  // Check for updates every several minutes
+  function setUpdateSchedule(id) {
+    checkUpdates(id);
+    setInterval(checkUpdates.bind(this, id), 10000);
+  }
+
+  var notification = new BgWidget(NOTIFICATION_ID, NOTIFICATION_SRC);
+  function checkUpdates(id) {
+    Ajax.post(HOST + '/updates/' + id).success(function(res) {
+      chrome.tabs.query({currentWindow: true, active : true}, function(tabs) {
+        chrome.tabs.insertCSS(tabs[0].id, {file : 'styles.css'});
+        notification.inject(tabs[0].id, function() {
+          console.log('callback');
+        });
+      });
+    }).send();
+  }
 });

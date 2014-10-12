@@ -1,0 +1,27 @@
+// Common Values
+@panelPadding: 10px;
+
+.clearfix { zoom: 1; }
+.clearfix:before, .clearfix:after { content: "\0020"; display: block; height: 0; overflow: hidden; }
+.clearfix:after { clear: both; }
+
+.col(@numCols) {
+  float: left;
+  width: percentage(1/@numCols);
+}
+.col-width(@width) {
+  float: left;
+  width: @width;
+}
+.col-container {
+  &:extend(.clearfix);
+}
+
+.fullscreen {
+  display: inline-block;
+  position: fixed;
+  left: 0;
+  right: 0;
+  top: 0;
+  bottom: 0;
+}
