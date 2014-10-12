@@ -54,7 +54,7 @@ body {
 }
 .notification {
   position: absolute;
-  top: 50px;
+  top: 30px;
   left: 0;
   right: 0;
   bottom: 0;
@@ -62,7 +62,7 @@ body {
 .left-arrow,
 .right-arrow {
   float: left;
-  width: 100px;
+  width: 50px;
   height: 100%;
 }
 .left-arrow img,
@@ -72,6 +72,10 @@ body {
 }
 .content {
   float: left;
-  width: 144px;
+  width: 244px;
   height: 100%;
+}
+.content iframe {
+  height: 100px;
+  width: 100%;
 }

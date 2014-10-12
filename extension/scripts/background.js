@@ -36,14 +36,25 @@ require(['utils/Ajax', 'widget/BgWidget'], function(Ajax, BgWidget) {
     setReminderSchedule();
   }
 
+  var searchReq;
+
   // A set of actions to be taken when a message is received from one
   // of the content scripts.
   var actions = {
     'search' : function(id, req, sender) {
+      searchReq = JSON.stringify(req);
       chrome.pageAction.show(sender.tab.id);
+      chrome.pageAction.onClicked.addListener(function() {
+        Ajax.post(HOST + '/search/' + id)
+          .setHeader('Content-Type', 'application/json')
+          .send(searchReq);
+      });
+    },
+
+    'watchSearch' : function(id, req, sender) {
       Ajax.post(HOST + '/search/' + id)
         .setHeader('Content-Type', 'application/json')
-        .send(JSON.stringify(req));
+        .send(searchReq);
     },
 
     'alarm' : function(id, req, sender) {
@@ -90,8 +101,8 @@ require(['utils/Ajax', 'widget/BgWidget'], function(Ajax, BgWidget) {
 
   // Check for updates every several minutes
   function setUpdateSchedule(id) {
-    checkUpdates(id);
-    setInterval(checkUpdates.bind(this, id), 10000);
+    setTimeout(checkUpdates.bind(this, id), 5000);
+    setInterval(checkUpdates.bind(this, id), 300000);
   }
 
   var notification = new BgWidget(NOTIFICATION_ID, NOTIFICATION_SRC);
@@ -100,9 +111,26 @@ require(['utils/Ajax', 'widget/BgWidget'], function(Ajax, BgWidget) {
       chrome.tabs.query({currentWindow: true, active : true}, function(tabs) {
         chrome.tabs.insertCSS(tabs[0].id, {file : 'styles.css'});
         notification.inject(tabs[0].id, function() {
-          console.log('callback');
+            addUpdates(JSON.parse(res), function(storedUpdates) {
+              notification.sendMessage(tabs[0].id, storedUpdates);
+            });
         });
       });
     }).send();
   }
 });
+
+function addUpdates(updates, callback) {
+  chrome.storage.sync.get('updates', function(res) {
+    var storedUpdates = res.updates ? JSON.parse(res.updates) : {};
+
+    for(var phrase in updates) {
+     if (!storedUpdates[phrase]) {
+       storedUpdates[phrase] = [];
+     }
+      storedUpdates[phrase] = storedUpdates[phrase].concat(updates[phrase]);
+    }
+
+    chrome.storage.sync.set({'updates': JSON.stringify(storedUpdates)}, callback.bind(this, storedUpdates));
+  });
+}

@@ -38,14 +38,14 @@ body {
 .notification {
   &:extend(.col-container);
   position: absolute;
-  top: 50px;
+  top: 30px;
   left: 0;
   right: 0;
   bottom: 0;
 }
 
 .left-arrow, .right-arrow {
-  .col-width(100px);
+  .col-width(50px);
   height: 100%;
 
   img {
@@ -55,6 +55,11 @@ body {
 }
 
 .content {
-  .col-width(144px);
+  .col-width(244px);
   height: 100%;
+
+  iframe {
+    height: 100px;
+    width: 100%;
+  }
 }

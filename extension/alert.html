@@ -1,6 +1,14 @@
 <!DOCTYPE html>
 <html>
   <body>
-    <button>Watch search</button>
+    <button id="watch_button">Watch search</button>
+
+    <script>
+      document.getElementById('watch_button').onclick = function() {
+        chrome.runtime.sendMessage({
+          action: 'watchSearch'
+        });
+      };
+    </script>
   </body>
 </html>

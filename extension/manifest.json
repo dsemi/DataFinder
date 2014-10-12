@@ -21,8 +21,7 @@
     "19": "images/bell_19.png",
     "38": "images/bell_38.png"
     },
-    "default_title": "Search Alert",
-    "default_popup": "alert.html"
+    "default_title": "Watch Search"
   },
 
   "content_scripts": [
