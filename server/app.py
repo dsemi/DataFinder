@@ -5,8 +5,9 @@ import json
 import requests
 from uuid import uuid4
 from datetime import datetime
+from urllib.parse import quote
 from pymongo import MongoClient
-from flask import Flask, request
+from flask import Flask, request, jsonify
 
 app = Flask(__name__)
 search_url = 'https://www.googleapis.com/customsearch/v1?q={}&cx={}&key={}'
@@ -27,8 +28,8 @@ def get_phrase(uid):
     obj['last update'] = datetime.now()
     pages = obj.setdefault('pages', {})
     phpages = pages.setdefault(phrase, {})
-    phpages['old'] = list(set(search(phrase)))
-    phpages['new'] = []
+    phpages['new'] = list(set(search(phrase)))
+    phpages['old'] = []
     db.data.update({'uuid': uid}, obj)
     return ''
 
@@ -46,11 +47,22 @@ def schedule():
 
 @app.route('/updates/<uid>', methods=['POST', 'GET'])
 def get_info(uid):
-    pass # return info for given user
+    data = db.data.find_one({'uuid': uid})
+    queries = {}
+    for query,v in data['pages'].items():
+        links = v['new'].copy()
+        v['old'].extend(v['new'])
+        v['new'] = []
+        queries[query] = links
+    db.data.update({'uuid': uid}, data)
+    return jsonify(**queries)
 
 def search(query):
-    r = requests.get(search_url.format(query, cx, key))
-    return [x['link'] for x in r.json()['items']]
+    # Leave disabled until Google query limit is fixed
+    # r = requests.get(search_url.format(quote(query), cx, key))
+    # print(r)
+    # return [x['link'] for x in r.json()['items']]
+    return ["ahah"]
 
 if __name__ == '__main__':
     client = MongoClient()
